@@ -1,6 +1,6 @@
-﻿using Entities.Concrete;
+﻿using Business.Abstract;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace WebAPI.Controllers
 {
@@ -8,14 +8,58 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        [HttpGet]
-        public List<Product> Get()
+        //Loosely coupled
+        //naming convention
+        //IoC Container -- Inversion of Control kullanmak gerekiyor bu durumda. Bir liste gibi düşünebiliriz. Buraya new'lenmiş manager'lar,dal'lar atılıyor. İhtiyacımız olanı kullanıyoruz.
+
+        IProductService _productService;
+
+        public ProductsController(IProductService productService)
         {
-            return new List<Product>
+            _productService = productService;
+        }
+
+        [HttpGet("getall")]
+        //public List<Product> Get()
+        //{
+        //    //Dependency chain -- bağımlılık zinciri
+        //    //IProductService productService = new ProductManager(new EfProductDal());
+
+        //    var result = _productService.GetAll();
+        //    return result.Data;
+        //}
+
+        public IActionResult GetAll()
+        {
+            //swagger -- hazır api dökümantasyonu sunar.
+            var result = _productService.GetAll();
+            if (result.Success)
             {
-                new Product{ProductId = 1 , ProductName = "Elma"},
-                new Product{ProductId = 2, ProductName = "Armut"}
-            };
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int id)
+        {
+            var result = _productService.GetById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPost("add")]
+        public IActionResult Add(Product product)
+        {
+            var result = _productService.Add(product);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
