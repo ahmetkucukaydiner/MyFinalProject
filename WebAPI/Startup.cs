@@ -1,7 +1,3 @@
-using Business.Abstract;
-using Business.Concrete;
-using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,8 +21,8 @@ namespace WebAPI
             //AOP
             //Autofac, Ninject, CastleWindsor, StructreMap, LightIntejct, DryInject --->IoC Container
             services.AddControllers();
-            services.AddSingleton<IProductService, ProductManager>(); // içinde data yoksa singleton yapýlabilir
-            services.AddSingleton<IProductDal, EfProductDal>();
+            //services.AddSingleton<IProductService, ProductManager>(); // içinde data yoksa singleton yapýlabilir
+            //services.AddSingleton<IProductDal, EfProductDal>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
