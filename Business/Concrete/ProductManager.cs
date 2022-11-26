@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -18,16 +20,42 @@ namespace Business.Concrete
             _productDal = productDal;
         }
 
+        [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
             //business codes
             //anti pattern -- kötü kullanım
-            if (product.ProductName.Length < 2)
-            {
-                //magic strings
-                //return new ErrorResult("Ürün ismi en az 2 karakter olmalıdır.");
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
+
+            //validation
+
+            //if (product.UnitPrice <= 0)
+            //{
+            //    return new ErrorResult(Messages.UnitPriceInvalid);
+            //}
+
+            //if (product.ProductName.Length < 2)
+            //{
+            //    //magic strings
+            //    //return new ErrorResult("Ürün ismi en az 2 karakter olmalıdır.");
+            //    return new ErrorResult(Messages.ProductNameInvalid);
+            //}
+
+            // yukarıdaki kodların fluent validation eklendikten sonraki hali. ancak yine refator edilecek.
+
+            //var context = new ValidationContext<Product>(product);
+            //ProductValidator productValidator = new ProductValidator();
+            //var result = productValidator.Validate(context);
+
+            //if (!result.IsValid)
+            //{
+            //    throw new ValidationException(result.Errors);
+            //}
+
+
+            //üsttekinin refatoring edilmiş hali
+
+            //ValidationTool.Validate(new ProductValidator(), product);  //core aspect eklendi. artık buna ihtiyacım kalmadı.
+
             _productDal.Add(product);
             //return new Result(true, "Ürün eklendi.");
             return new SuccessResult(Messages.ProductAdded);
